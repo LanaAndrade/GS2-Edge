@@ -1,0 +1,619 @@
+[
+    {
+        "id": "c64cc35e9e8901aa",
+        "type": "tab",
+        "label": "Flow 2",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "e7a4067e7e3cacbe",
+        "type": "mqtt in",
+        "z": "c64cc35e9e8901aa",
+        "name": "OceanBlue/empresa/temperature",
+        "topic": "OceanBlue/empresa/temperature",
+        "qos": "0",
+        "datatype": "auto-detect",
+        "broker": "23fe79556fb4a7a1",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 150,
+        "y": 140,
+        "wires": [
+            [
+                "e0896d65104bb28d",
+                "d25f849f499b75f9"
+            ]
+        ]
+    },
+    {
+        "id": "63fe0971b8393f72",
+        "type": "mqtt in",
+        "z": "c64cc35e9e8901aa",
+        "name": "OceanBlue/empresa/luminosidade",
+        "topic": "OceanBlue/empresa/luminosidade",
+        "qos": "0",
+        "datatype": "auto-detect",
+        "broker": "23fe79556fb4a7a1",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 160,
+        "y": 220,
+        "wires": [
+            [
+                "a49db9953655fdab",
+                "8d17847b50f64137"
+            ]
+        ]
+    },
+    {
+        "id": "3750f880fd8d40d6",
+        "type": "mqtt in",
+        "z": "c64cc35e9e8901aa",
+        "name": "OceanBlue/empresa/movimento",
+        "topic": "OceanBlue/empresa/movimento",
+        "qos": "0",
+        "datatype": "auto-detect",
+        "broker": "23fe79556fb4a7a1",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 150,
+        "y": 300,
+        "wires": [
+            [
+                "89be2bdad616aa20",
+                "0e05b198ed5095c5"
+            ]
+        ]
+    },
+    {
+        "id": "e0896d65104bb28d",
+        "type": "function",
+        "z": "c64cc35e9e8901aa",
+        "name": "Temperatura",
+        "func": "var Ultra = {\n    payload: {\n        \"variable\": \"temperatura\",\n        \"unit\": \"C\",\n        \"value\": msg.payload.toString()\n    }\n};\n\nreturn Ultra;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 430,
+        "y": 100,
+        "wires": [
+            [
+                "b4b2e1c21b04904f"
+            ]
+        ]
+    },
+    {
+        "id": "a49db9953655fdab",
+        "type": "function",
+        "z": "c64cc35e9e8901aa",
+        "name": "Luminosidade",
+        "func": "var Ultra = {\n    payload: {\n        \"variable\": \"luminosidade\",\n        \"unit\": \"lux\",\n        \"value\": msg.payload.toString()\n    }\n};\n\nreturn Ultra;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 420,
+        "y": 200,
+        "wires": [
+            [
+                "b4b2e1c21b04904f"
+            ]
+        ]
+    },
+    {
+        "id": "89be2bdad616aa20",
+        "type": "function",
+        "z": "c64cc35e9e8901aa",
+        "name": "Movimento",
+        "func": "var Ultra = {\n    payload: {\n        \"variable\": \"movimento\",\n        \"value\": msg.payload.toString()\n    }\n};\n\nreturn Ultra;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 430,
+        "y": 300,
+        "wires": [
+            [
+                "b4b2e1c21b04904f"
+            ]
+        ]
+    },
+    {
+        "id": "b4b2e1c21b04904f",
+        "type": "mqtt out",
+        "z": "c64cc35e9e8901aa",
+        "name": "",
+        "topic": "tago/data/post",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "2d6108bf930524ef",
+        "x": 1280,
+        "y": 480,
+        "wires": []
+    },
+    {
+        "id": "d25f849f499b75f9",
+        "type": "function",
+        "z": "c64cc35e9e8901aa",
+        "name": "Média Temperatura",
+        "func": "// Obtém a soma acumulada e o contador da memória de contexto, ou inicializa-os como 0\nvar soma = context.get('soma') || 0;\nvar contador = context.get('contador') || 0;\n\n// Recebe o número\nvar numero = msg.payload;\n\n// Verifica se o número é um número\nif (typeof numero === 'number') {\n    // Adiciona o número à soma\n    soma += numero;\n    // Incrementa o contador\n    contador++;\n}\n\n// Armazena a soma acumulada e o contador na memória de contexto\ncontext.set('soma', soma);\ncontext.set('contador', contador);\n\nvar media = contador > 0 ? (soma / contador).toFixed(2) : 0;\n\n// Retorna a média\nreturn {\n    payload: {\n        variable: \"media_temp\",  // Give a meaningful name to your variable\n        value: parseFloat(media),  // Convert the `media` value to a float\n        unit: \"C\",                 // Optional: include the unit if applicable (e.g., Celsius for temperature)\n        time: new Date().toISOString()  // Optional: include a timestamp\n    }\n};\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 430,
+        "y": 140,
+        "wires": [
+            [
+                "b4b2e1c21b04904f",
+                "157402a30d57712e"
+            ]
+        ]
+    },
+    {
+        "id": "8d17847b50f64137",
+        "type": "function",
+        "z": "c64cc35e9e8901aa",
+        "name": "Média Luminosidade",
+        "func": "// Obtém a soma acumulada e o contador da memória de contexto, ou inicializa-os como 0\nvar soma = context.get('soma') || 0;\nvar contador = context.get('contador') || 0;\n\n// Recebe o número\nvar numero = msg.payload;\n\n// Verifica se o número é um número\nif (typeof numero === 'number') {\n    // Adiciona o número à soma\n    soma += numero;\n    // Incrementa o contador\n    contador++;\n}\n\n// Armazena a soma acumulada e o contador na memória de contexto\ncontext.set('soma', soma);\ncontext.set('contador', contador);\n\nvar media = contador > 0 ? (soma / contador).toFixed(2) : 0;\n\nreturn {\n    payload: {\n        variable: \"media_luminosidade\",  // Give a meaningful name to your variable\n        value: parseFloat(media),  // Convert the `media` value to a float\n        unit: \"lux\",                 // Optional: include the unit if applicable (e.g., Celsius for temperature)\n        time: new Date().toISOString()  // Optional: include a timestamp\n    }\n};\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 440,
+        "y": 240,
+        "wires": [
+            [
+                "b4b2e1c21b04904f",
+                "3afab535171a8b59"
+            ]
+        ]
+    },
+    {
+        "id": "0e05b198ed5095c5",
+        "type": "function",
+        "z": "c64cc35e9e8901aa",
+        "name": "Média Movimento",
+        "func": "// Obtém a soma acumulada e o contador da memória de contexto, ou inicializa-os como 0\nvar soma = context.get('soma') || 0;\nvar contador = context.get('contador') || 0;\n\n// Recebe o número\nvar numero = msg.payload;\n\n// Verifica se o número é um número\nif (typeof numero === 'number') {\n    // Adiciona o número à soma\n    soma += numero;\n    // Incrementa o contador\n    contador++;\n}\n\n// Armazena a soma acumulada e o contador na memória de contexto\ncontext.set('soma', soma);\ncontext.set('contador', contador);\n\nvar media = contador > 0 ? (soma / contador).toFixed(2) : 0;\n\n// Retorna a média\nreturn {\n    payload: {\n        variable: \"media_movimento\",  // Give a meaningful name to your variable\n        value: parseFloat(media),  // Convert the `media` value to a float\n        time: new Date().toISOString()  // Optional: include a timestamp\n    }\n};\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 450,
+        "y": 340,
+        "wires": [
+            [
+                "b4b2e1c21b04904f",
+                "a3993c9573884120"
+            ]
+        ]
+    },
+    {
+        "id": "157402a30d57712e",
+        "type": "function",
+        "z": "c64cc35e9e8901aa",
+        "name": "Temperatura Segura",
+        "func": "if (msg.payload.media_temp > 24 && msg.payload.media_temp < 30) {\n    msg.payload = \"Temperatura segura\";\n} else {\n    msg.payload = \"Alerta: Temperatura insegura\";\n}\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 680,
+        "y": 140,
+        "wires": [
+            [
+                "9dbfd5c10492af1a"
+            ]
+        ]
+    },
+    {
+        "id": "3afab535171a8b59",
+        "type": "function",
+        "z": "c64cc35e9e8901aa",
+        "name": "Luminosidade Segura",
+        "func": "if (msg.payload.media_luminosidade > 1000 && msg.payload.media_luminosidade < 200000) {\n    msg.payload = \"Luminosidade segura\";\n} else {\n    msg.payload = \"Alerta: Luminosidade insegura\";\n}\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 680,
+        "y": 240,
+        "wires": [
+            [
+                "9dbfd5c10492af1a"
+            ]
+        ]
+    },
+    {
+        "id": "a3993c9573884120",
+        "type": "function",
+        "z": "c64cc35e9e8901aa",
+        "name": "Movimento Seguro",
+        "func": "// Exemplo de valores calculados durante o período de observação\nconst mediaBase = 0.05; // média calculada de movimento\nconst desvioPadrao = 0.02; // desvio padrão calculado\n\nconst limiteMinimo = mediaBase - desvioPadrao; // limite mínimo aceitável\nconst limiteMaximo = mediaBase + desvioPadrao; // limite máximo aceitável\n\n// Verificação dos dados atuais do sensor\nconst movimentoAtual = msg.payload.media_movimento;\n\nif (movimentoAtual < limiteMinimo) {\n    msg.payload = \"Alerta: Movimento insuficiente, possível impacto na vida marinha\";\n} else if (movimentoAtual > limiteMaximo) {\n    msg.payload = \"Alerta: Movimento anômalo detectado, possível interferência\";\n} else {\n    msg.payload = \"Movimento dentro dos limites normais\";\n}\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 670,
+        "y": 340,
+        "wires": [
+            [
+                "9dbfd5c10492af1a"
+            ]
+        ]
+    },
+    {
+        "id": "9dbfd5c10492af1a",
+        "type": "mqtt out",
+        "z": "c64cc35e9e8901aa",
+        "name": "OceanBlue/empresa/Status",
+        "topic": "OceanBlue/empresa/Status",
+        "qos": "0",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "23fe79556fb4a7a1",
+        "x": 1060,
+        "y": 400,
+        "wires": []
+    },
+    {
+        "id": "62052c9e9398489b",
+        "type": "function",
+        "z": "c64cc35e9e8901aa",
+        "name": "Oxigenio",
+        "func": "var Ultra = {\n    payload: {\n        \"variable\": \"oxigenio\",\n        \"unit\": \"mg/L\",\n        \"value\": msg.payload.toString()\n    }\n};\n\nreturn Ultra;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 420,
+        "y": 400,
+        "wires": [
+            [
+                "b4b2e1c21b04904f"
+            ]
+        ]
+    },
+    {
+        "id": "ee4123f76d003f70",
+        "type": "function",
+        "z": "c64cc35e9e8901aa",
+        "name": "PH",
+        "func": "var Ultra = {\n    payload: {\n        \"variable\": \"ph\",\n        \"value\": msg.payload.toString()\n    }\n};\n\nreturn Ultra;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 390,
+        "y": 500,
+        "wires": [
+            [
+                "b4b2e1c21b04904f"
+            ]
+        ]
+    },
+    {
+        "id": "edba3b6b51cf2ddc",
+        "type": "function",
+        "z": "c64cc35e9e8901aa",
+        "name": "Turbidez",
+        "func": "var Ultra = {\n    payload: {\n        \"variable\": \"turbidez\",\n        \"value\": msg.payload.toString()\n    }\n};\n\nreturn Ultra;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 420,
+        "y": 600,
+        "wires": [
+            [
+                "b4b2e1c21b04904f"
+            ]
+        ]
+    },
+    {
+        "id": "43abca3e118c038d",
+        "type": "function",
+        "z": "c64cc35e9e8901aa",
+        "name": "Média Oxigenio",
+        "func": "// Obtém a soma acumulada e o contador da memória de contexto, ou inicializa-os como 0\nvar soma = context.get('soma') || 0;\nvar contador = context.get('contador') || 0;\n\n// Recebe o número\nvar numero = msg.payload;\n\n// Verifica se o número é um número\nif (typeof numero === 'number') {\n    // Adiciona o número à soma\n    soma += numero;\n    // Incrementa o contador\n    contador++;\n}\n\n// Armazena a soma acumulada e o contador na memória de contexto\ncontext.set('soma', soma);\ncontext.set('contador', contador);\n\nvar media = contador > 0 ? (soma / contador).toFixed(2) : 0;\n\n// Retorna a média\nreturn {\n    payload: {\n        variable: \"media_oxi\",  // Give a meaningful name to your variable\n        value: parseFloat(media),  // Convert the `media` value to a float\n        unit: \"mg/L\",                 // Optional: include the unit if applicable (e.g., Celsius for temperature)\n        time: new Date().toISOString()  // Optional: include a timestamp\n    }\n};\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 420,
+        "y": 440,
+        "wires": [
+            [
+                "571ccf5ef6330a80"
+            ]
+        ]
+    },
+    {
+        "id": "84d677608d4a1639",
+        "type": "function",
+        "z": "c64cc35e9e8901aa",
+        "name": "Média PH",
+        "func": "// Obtém a soma acumulada e o contador da memória de contexto, ou inicializa-os como 0\nvar soma = context.get('soma') || 0;\nvar contador = context.get('contador') || 0;\n\n// Recebe o número\nvar numero = msg.payload;\n\n// Verifica se o número é um número\nif (typeof numero === 'number') {\n    // Adiciona o número à soma\n    soma += numero;\n    // Incrementa o contador\n    contador++;\n}\n\n// Armazena a soma acumulada e o contador na memória de contexto\ncontext.set('soma', soma);\ncontext.set('contador', contador);\n\nvar media = contador > 0 ? (soma / contador).toFixed(2) : 0;\n\nreturn {\n    payload: {\n        variable: \"media_ph\",  // Give a meaningful name to your variable\n        value: parseFloat(media)  // Convert the `media` value to a float\n    }\n};\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 400,
+        "y": 540,
+        "wires": [
+            [
+                "cdf438a62a8d5499"
+            ]
+        ]
+    },
+    {
+        "id": "0b9b53eb01723cdc",
+        "type": "function",
+        "z": "c64cc35e9e8901aa",
+        "name": "Média Turbidez",
+        "func": "// Obtém a soma acumulada e o contador da memória de contexto, ou inicializa-os como 0\nvar soma = context.get('soma') || 0;\nvar contador = context.get('contador') || 0;\n\n// Recebe o número\nvar numero = msg.payload;\n\n// Verifica se o número é um número\nif (typeof numero === 'number') {\n    // Adiciona o número à soma\n    soma += numero;\n    // Incrementa o contador\n    contador++;\n}\n\n// Armazena a soma acumulada e o contador na memória de contexto\ncontext.set('soma', soma);\ncontext.set('contador', contador);\n\nvar media = contador > 0 ? (soma / contador).toFixed(2) : 0;\n\n// Retorna a média\nreturn {\n    payload: {\n        variable: \"media_turbidez\",  // Give a meaningful name to your variable\n        value: parseFloat(media),  // Convert the `media` value to a float\n        time: new Date().toISOString()  // Optional: include a timestamp\n    }\n};\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 440,
+        "y": 640,
+        "wires": [
+            [
+                "1736d3bd0c67aa90"
+            ]
+        ]
+    },
+    {
+        "id": "571ccf5ef6330a80",
+        "type": "function",
+        "z": "c64cc35e9e8901aa",
+        "name": "Oxigenio Seguro",
+        "func": "if (msg.payload.media_oxi > 5) {\n    msg.payload = \"Nível de oxigênio seguro\";\n} else if (msg.payload.media_oxi > 3 && msg.payload.media_oxi <= 5) {\n    msg.payload = \"Nível de oxigênio sub-ótimo\";\n} else if (msg.payload.media_oxi > 2 && msg.payload.media_oxi <= 3) {\n    msg.payload = \"Nível de oxigênio baixo\";\n} else {\n    msg.payload = \"Alerta: Nível de oxigênio muito baixo\";\n}\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 670,
+        "y": 440,
+        "wires": [
+            [
+                "9dbfd5c10492af1a"
+            ]
+        ]
+    },
+    {
+        "id": "cdf438a62a8d5499",
+        "type": "function",
+        "z": "c64cc35e9e8901aa",
+        "name": "PH Seguro",
+        "func": "if (msg.payload.media_ph >= 7.5 && msg.payload.media_ph <= 8.5) {\n    msg.payload = \"Nível de pH seguro\";\n} else if ((msg.payload.media_ph >= 7.0 && msg.payload.media_ph < 7.5) || (msg.payload.media_ph > 8.5 && msg.payload.media_ph <= 9.0)) {\n    msg.payload = \"Nível de pH sub-ótimo\";\n} else if (msg.payload.media_ph >= 6.5 && msg.payload.media_ph < 7.0) {\n    msg.payload = \"Nível de pH baixo\";\n} else if (msg.payload.media_ph < 6.5) {\n    msg.payload = \"Alerta: Nível de pH muito baixo\";\n} else if (msg.payload.media_ph > 9.0) {\n    msg.payload = \"Alerta: Nível de pH muito alto\";\n} else {\n    msg.payload = \"Valor de pH inválido ou ausente\";\n}\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 650,
+        "y": 540,
+        "wires": [
+            [
+                "9dbfd5c10492af1a"
+            ]
+        ]
+    },
+    {
+        "id": "1736d3bd0c67aa90",
+        "type": "function",
+        "z": "c64cc35e9e8901aa",
+        "name": "Turbidez Segura",
+        "func": "if (msg.payload.media_turbidez < 5) {\n    msg.payload = \"Turbidez baixa\";\n} else if (msg.payload.media_turbidez >= 5 && msg.payload.media_turbidez <= 25) {\n    msg.payload = \"Turbidez moderada\";\n} else {\n    msg.payload = \"Alerta: Turbidez alta\";\n}\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 660,
+        "y": 640,
+        "wires": [
+            [
+                "9dbfd5c10492af1a"
+            ]
+        ]
+    },
+    {
+        "id": "2f18212729ddc8dc",
+        "type": "mqtt in",
+        "z": "c64cc35e9e8901aa",
+        "name": "OceanBlue/empresa/oxigenio",
+        "topic": "OceanBlue/empresa/oxigenio",
+        "qos": "0",
+        "datatype": "auto-detect",
+        "broker": "23fe79556fb4a7a1",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 140,
+        "y": 420,
+        "wires": [
+            [
+                "62052c9e9398489b",
+                "43abca3e118c038d"
+            ]
+        ]
+    },
+    {
+        "id": "21716b8c41a3e518",
+        "type": "mqtt in",
+        "z": "c64cc35e9e8901aa",
+        "name": "OceanBlue/empresa/ph",
+        "topic": "OceanBlue/empresa/ph",
+        "qos": "0",
+        "datatype": "auto-detect",
+        "broker": "23fe79556fb4a7a1",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 120,
+        "y": 540,
+        "wires": [
+            [
+                "ee4123f76d003f70",
+                "84d677608d4a1639"
+            ]
+        ]
+    },
+    {
+        "id": "5e275ca6281bf9d0",
+        "type": "mqtt in",
+        "z": "c64cc35e9e8901aa",
+        "name": "OceanBlue/empresa/turbidez",
+        "topic": "OceanBlue/empresa/turbidez",
+        "qos": "0",
+        "datatype": "auto-detect",
+        "broker": "23fe79556fb4a7a1",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 140,
+        "y": 620,
+        "wires": [
+            [
+                "edba3b6b51cf2ddc",
+                "0b9b53eb01723cdc"
+            ]
+        ]
+    },
+    {
+        "id": "23fe79556fb4a7a1",
+        "type": "mqtt-broker",
+        "name": "",
+        "broker": "broker.hivemq.com",
+        "port": "1883",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "2d6108bf930524ef",
+        "type": "mqtt-broker",
+        "z": "c64cc35e9e8901aa",
+        "name": "",
+        "broker": "mqtt.tago.io",
+        "port": "1883",
+        "tls": "23fd629e11611a9b",
+        "clientid": "lana_mqttt",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "23fd629e11611a9b",
+        "type": "tls-config",
+        "name": "",
+        "cert": "",
+        "key": "",
+        "ca": "",
+        "certname": "",
+        "keyname": "",
+        "caname": "",
+        "servername": "",
+        "verifyservercert": true,
+        "alpnprotocol": ""
+    }
+]
