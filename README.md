@@ -22,6 +22,19 @@ O monitoramento da Ocean Blue dura por volta de 6 meses e, ao final, um levantam
 ## Desenvolvimento
 O projeto foi desenvolvido utilizando a plataforma Wokwi para a montagem do esquema e para a codificação. 
 
+## Como rodar?
+
+Será primeiro necessário instalar o node-red em sua máquina, através dos comandos:
+
+* npm install -g --unsafe-perm node-red
+* node-red
+
+Após isso será necessário acessar o link do node-red: http://localhost:1880/#flow/550a3e0691c51e85 e importar o arquivo flows (4).json contido nesse repositório e dar deploy
+
+![image](https://github.com/LanaAndrade/GS2-Edge/assets/82892986/f00e08be-1ac5-4e81-b557-0f037dd14c53)
+
+Após isso, é só clicar no link abaixo para o código fonte e dar play (símbolo verde) - para alterar os valores dos sensores, é só clicar encima do sensor desejado e modificar seu valor.
+
 ## Código Fonte
 [Link para o simulador](https://wokwi.com/projects/399804222651837441)
 
