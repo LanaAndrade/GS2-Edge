@@ -39,7 +39,7 @@ Após isso, é só clicar no link abaixo para o código fonte e dar play (símbo
 [Link para o simulador](https://wokwi.com/projects/399804222651837441)
 
 ### Vídeo do Projeto
-<a href=""><img width="960" alt="image" src="https://github.com/LanaAndrade/EdgeSprint04/assets/82892986/434919ca-3c08-46f2-8142-5ee656920df0"></a>
+<a href="https://youtu.be/4Wb967PrX48"><img width="960" alt="image" src="https://github.com/LanaAndrade/GS2-Edge/assets/82892986/42d31692-2e89-4d8b-96d2-605291f87675"></a>
 
 ## Desenvolvedores
 
